@@ -1,11 +1,9 @@
-﻿using System;
+﻿using MFPC_server.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MFPC_server.Data;
 
 namespace MFPC_server.Controllers
 {
@@ -22,12 +20,49 @@ namespace MFPC_server.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.User.ToListAsync();
         }
 
-        // GET: api/Users/5
+        // GET: api/Users/organisation/{organisationId}
+        [HttpGet("organisation/{organisationId}")]
+        public async Task<ActionResult<IEnumerable<User>>> GetOrganisationUsers(int organisationId)
+        {
+            var users = await _context.User
+                .Join(_context.Memberships,
+                    u => u.Id,
+                    m => m.UserId,
+                    (u, m) => new
+                    {
+                        Id = u.Id,
+                        Username = u.Username,
+                        Password = u.Password,
+                        Email = u.Email,
+                        JobTitleId = u.JobTitleId,
+                        OrganisationId = m.OrganisationId
+                    })
+                .Where(m => m.OrganisationId == organisationId)
+                .ToListAsync();
+
+            var usersFromOrganosation = new List<User>();
+
+            foreach (var u in users)
+            {
+                usersFromOrganosation.Add(new User()
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Password = u.Password,
+                    Email = u.Email,
+                    JobTitleId = u.JobTitleId,
+                });
+            }
+
+            return usersFromOrganosation;
+        }
+
+        // GET: api/Users/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -41,9 +76,7 @@ namespace MFPC_server.Controllers
             return user;
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        // PUT: api/Users/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
@@ -74,8 +107,6 @@ namespace MFPC_server.Controllers
         }
 
         // POST: api/Users
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
@@ -84,7 +115,7 @@ namespace MFPC_server.Controllers
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetUser", new {id = user.Id}, user);
+                return CreatedAtAction("GetUser", new { id = user.Id }, user);
             }
             else
             {
@@ -92,7 +123,7 @@ namespace MFPC_server.Controllers
             }
         }
 
-        // DELETE: api/Users/5
+        // DELETE: api/Users/{id}
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
