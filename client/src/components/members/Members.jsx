@@ -58,7 +58,7 @@ class Members extends Component {
   }
 
   async editMember(id) {
-    console.log(id);
+    this.props.history.push(`/members/edit?id=${id}`);
   }
 
   render() {
