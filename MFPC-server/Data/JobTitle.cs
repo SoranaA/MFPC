@@ -14,8 +14,6 @@ namespace MFPC_server.Data
 
         public string Description { get; set; }
 
-        public int OrganisationId { get; set; }
-
         public virtual ICollection<JobTitleRole> Roles { get; set; } = new List<JobTitleRole>();
     }
 }

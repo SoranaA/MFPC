@@ -33,6 +33,7 @@ ul.header li a {
 .content h2 {
   padding: 0;
   margin: 0;
+  margin-bottom: 2rem;
 }
 .content li {
   margin-bottom: 10px;
@@ -40,4 +41,8 @@ ul.header li a {
 
 .active {
   background-color: #b700ff;
+}
+
+.formControl {
+  min-width: 400px !important;
 }

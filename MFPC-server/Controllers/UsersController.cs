@@ -1,4 +1,5 @@
-﻿using MFPC_server.Data;
+﻿using System;
+using MFPC_server.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -22,7 +23,9 @@ namespace MFPC_server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.User.ToListAsync();
+            return await _context.User
+                .Include(u => u.JobTitle)
+                .ToListAsync();
         }
 
         // GET: api/Users/{id}
@@ -75,6 +78,7 @@ namespace MFPC_server.Controllers
         {
             if (!UserExists(user.Id))
             {
+                user.AddedOn = DateTime.Now;
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
 

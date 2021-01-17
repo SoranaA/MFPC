@@ -1,9 +1,10 @@
 const serviceUrl = "https://localhost:5001/api";
 
 const Endpoints = {
-    GetUsers: `${serviceUrl}/users`,
-}
+  GetUsers: `${serviceUrl}/users`,
+  AddUser: `${serviceUrl}/users`,
 
-export {
-    Endpoints
+  GetJobTitles: `${serviceUrl}/jobtitles`,
 };
+
+export { Endpoints };
