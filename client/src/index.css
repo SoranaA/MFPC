@@ -46,3 +46,7 @@ ul.header li a {
 .formControl {
   min-width: 400px !important;
 }
+
+.description {
+  min-width: 841px !important;
+}

@@ -5,6 +5,9 @@ const Endpoints = {
   AddUser: `${serviceUrl}/users`,
 
   GetJobTitles: `${serviceUrl}/jobtitles`,
+  AddJobTitle: `${serviceUrl}/jobtitles`,
+
+  GetRoles: `${serviceUrl}/roles`,
 };
 
 export { Endpoints };

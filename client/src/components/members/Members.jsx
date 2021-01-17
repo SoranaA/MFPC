@@ -17,10 +17,7 @@ class Members extends Component {
 
     this.state = {
       users: [],
-      showAddModal: false,
     };
-
-    this.addNewMember = this.addNewMember.bind(this);
   }
 
   async componentDidMount() {
@@ -34,10 +31,6 @@ class Members extends Component {
           console.log(error);
         }
       );
-  }
-
-  async addNewMember() {
-    alert("clicked");
   }
 
   render() {

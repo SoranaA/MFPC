@@ -1,4 +1,5 @@
 ﻿using MFPC_server.Data;
+using MFPC_server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -20,9 +21,34 @@ namespace MFPC_server.Controllers
 
         // GET: api/JobTitles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<JobTitle>>> GetJobTitle()
+        public async Task<ActionResult<IEnumerable<JobTitleWithRoles>>> GetJobTitle()
         {
-            return await _context.JobTitle.ToListAsync();
+            var jobTitles =
+                await _context.JobTitle
+                .Include(j => j.Roles)
+                .ToListAsync();
+
+            var jobTitlesWithRoles = new List<JobTitleWithRoles>();
+
+            foreach (var jobTitle in jobTitles)
+            {
+                var roles = new List<RoleInfo>();
+
+                foreach (var jobTitleRole in jobTitle.Roles)
+                {
+                    var role = _context.Role.Where(r => r.Id == jobTitleRole.RoleId).FirstOrDefault();
+                    roles.Add(new RoleInfo(role.Id, role.Name, role.Description));
+                }
+
+                jobTitlesWithRoles.Add(new JobTitleWithRoles(
+                    jobTitle.Id,
+                    jobTitle.Name,
+                    jobTitle.Description,
+                    roles
+                    ));
+            }
+
+            return jobTitlesWithRoles;
         }
 
         // GET: api/JobTitles/5
@@ -71,12 +97,32 @@ namespace MFPC_server.Controllers
 
         // POST: api/JobTitles
         [HttpPost]
-        public async Task<ActionResult<JobTitle>> PostJobTitle(JobTitle jobTitle)
+        public async Task<IActionResult> PostJobTitle(AddJobTitleModel jobTitleToAdd)
         {
+            JobTitle jobTitle = new JobTitle()
+            {
+                Name = jobTitleToAdd.Name,
+                Description = jobTitleToAdd.Description
+            };
+
             _context.JobTitle.Add(jobTitle);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetJobTitle", new { id = jobTitle.Id }, jobTitle);
+            foreach (var roleId in jobTitleToAdd.Roles)
+            {
+                var jobTitleRole = new JobTitleRole()
+                {
+                    RoleId = roleId,
+                    JobTitleId = jobTitle.Id
+                };
+
+                _context.JobTitleRole.Add(jobTitleRole);
+            }
+
+            await _context.SaveChangesAsync();
+
+            //return CreatedAtAction("GetJobTitle", new { id = jobTitle.Id }, jobTitle);
+            return NoContent();
         }
 
         // DELETE: api/JobTitles/5

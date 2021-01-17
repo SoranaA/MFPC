@@ -22,7 +22,10 @@ namespace MFPC_server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<JobTitleRole>>> GetJobTitleRole()
         {
-            return await _context.JobTitleRole.ToListAsync();
+            return await _context.JobTitleRole
+                .Include(j => j.JobTitle)
+                .Include(j => j.Role)
+                .ToListAsync();
         }
 
         // GET: api/JobTitleRoles/5

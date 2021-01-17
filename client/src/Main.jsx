@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import Members from "./components/members/Members";
 import AddMember from "./components/members/AddMember";
 import JobTitle from "./components/jobTitles/JobTitles";
+import AddJobTitle from "./components/jobTitles/AddJobTitle";
 
 class Main extends Component {
   render() {
@@ -29,6 +30,7 @@ class Main extends Component {
             <Route exact path="/members" component={Members} />
             <Route exact path="/members/new" component={AddMember} />
             <Route exact path="/jobtitles" component={JobTitle} />
+            <Route exact path="/jobtitles/new" component={AddJobTitle} />
           </div>
         </div>
       </HashRouter>
