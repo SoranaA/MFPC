@@ -16,9 +16,6 @@ namespace MFPC_server.Data
 
         public int OrganisationId { get; set; }
 
-        [ForeignKey("OrganisationId")]
-        public virtual Organisation Organisation { get; set; }
-
         public virtual ICollection<JobTitleRole> Roles { get; set; } = new List<JobTitleRole>();
     }
 }

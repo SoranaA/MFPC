@@ -9,6 +9,8 @@ namespace MFPC_server
 {
     public class Startup
     {
+        private static readonly string CorsPolicy = nameof(CorsPolicy);
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -23,6 +25,14 @@ namespace MFPC_server
 
             services.AddDbContext<Data._DbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MfpcConnectionString")));
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(CorsPolicy,
+                    policy => policy.WithOrigins("http://localhost:3000")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +48,8 @@ namespace MFPC_server
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(CorsPolicy);
 
             app.UseEndpoints(endpoints =>
             {

@@ -25,43 +25,6 @@ namespace MFPC_server.Controllers
             return await _context.User.ToListAsync();
         }
 
-        // GET: api/Users/organisation/{organisationId}
-        [HttpGet("organisation/{organisationId}")]
-        public async Task<ActionResult<IEnumerable<User>>> GetOrganisationUsers(int organisationId)
-        {
-            var users = await _context.User
-                .Join(_context.Memberships,
-                    u => u.Id,
-                    m => m.UserId,
-                    (u, m) => new
-                    {
-                        Id = u.Id,
-                        Username = u.Username,
-                        Password = u.Password,
-                        Email = u.Email,
-                        JobTitleId = u.JobTitleId,
-                        OrganisationId = m.OrganisationId
-                    })
-                .Where(m => m.OrganisationId == organisationId)
-                .ToListAsync();
-
-            var usersFromOrganosation = new List<User>();
-
-            foreach (var u in users)
-            {
-                usersFromOrganosation.Add(new User()
-                {
-                    Id = u.Id,
-                    Username = u.Username,
-                    Password = u.Password,
-                    Email = u.Email,
-                    JobTitleId = u.JobTitleId,
-                });
-            }
-
-            return usersFromOrganosation;
-        }
-
         // GET: api/Users/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
