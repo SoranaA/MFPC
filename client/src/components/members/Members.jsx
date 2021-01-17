@@ -10,6 +10,9 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { NavLink } from "react-router-dom";
+import { IconButton } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 
 class Members extends Component {
   constructor(props) {
@@ -18,10 +21,18 @@ class Members extends Component {
     this.state = {
       users: [],
     };
+
+    this.fetchUsers = this.fetchUsers.bind(this);
+    this.deleteMember = this.deleteMember.bind(this);
+    this.editMember = this.editMember.bind(this);
   }
 
   async componentDidMount() {
-    fetch(Endpoints.GetUsers)
+    await this.fetchUsers();
+  }
+
+  async fetchUsers() {
+    fetch(Endpoints.Users)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -31,6 +42,23 @@ class Members extends Component {
           console.log(error);
         }
       );
+  }
+
+  async deleteMember(id) {
+    fetch(Endpoints.Users + `/${id}`, {
+      method: "DELETE",
+    }).then((response) => {
+      if (!response.ok) {
+        alert("Error while deleting the member");
+      } else {
+        alert("Member successfully deleted");
+        this.fetchUsers();
+      }
+    });
+  }
+
+  async editMember(id) {
+    console.log(id);
   }
 
   render() {
@@ -61,6 +89,8 @@ class Members extends Component {
                   <TableCell>Email</TableCell>
                   <TableCell>Added On</TableCell>
                   <TableCell>Job Title</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
 
@@ -77,6 +107,28 @@ class Members extends Component {
                       <TableCell>{user.addedOn}</TableCell>
                       <TableCell>
                         {user.jobTitle !== null ? user.jobTitle.name : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => {
+                            this.editMember(user.id);
+                          }}
+                          color="primary"
+                          aria-label="edit"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => {
+                            this.deleteMember(user.id);
+                          }}
+                          color="secondary"
+                          aria-label="delete"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );

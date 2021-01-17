@@ -34,7 +34,7 @@ class AddMember extends Component {
   }
 
   async componentDidMount() {
-    fetch(Endpoints.GetJobTitles)
+    fetch(Endpoints.JobTitles)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -87,7 +87,7 @@ class AddMember extends Component {
       }),
     };
 
-    fetch(Endpoints.AddUser, requestOptions)
+    fetch(Endpoints.Users, requestOptions)
       .then((response) => response.json())
       .then(
         (result) => {

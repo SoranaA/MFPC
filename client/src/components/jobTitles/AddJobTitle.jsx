@@ -30,7 +30,7 @@ class AddJobTitle extends Component {
   }
 
   async componentDidMount() {
-    fetch(Endpoints.GetRoles)
+    fetch(Endpoints.Roles)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -68,7 +68,7 @@ class AddJobTitle extends Component {
       }),
     };
 
-    fetch(Endpoints.AddJobTitle, requestOptions).then((response) => {
+    fetch(Endpoints.JobTitles, requestOptions).then((response) => {
       if (!response.ok) {
         alert(`Error while adding a new job title: ${response.statusText}`);
       } else {

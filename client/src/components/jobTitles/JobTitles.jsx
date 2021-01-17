@@ -10,6 +10,9 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { NavLink } from "react-router-dom";
+import { IconButton } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 
 class JobTitles extends Component {
   constructor(props) {
@@ -19,7 +22,10 @@ class JobTitles extends Component {
       jobTitles: [],
     };
 
+    this.fetchJobTitles = this.fetchJobTitles.bind(this);
     this.getRolesNamesAsString = this.getRolesNamesAsString.bind(this);
+    this.editJobTitle = this.editJobTitle.bind(this);
+    this.deleteJobTitle = this.deleteJobTitle.bind(this);
   }
 
   getRolesNamesAsString(roles) {
@@ -33,17 +39,37 @@ class JobTitles extends Component {
   }
 
   async componentDidMount() {
-    fetch(Endpoints.GetJobTitles)
+    await this.fetchJobTitles();
+  }
+
+  async fetchJobTitles() {
+    fetch(Endpoints.JobTitles)
       .then((res) => res.json())
       .then(
         (result) => {
-          console.log(result);
           this.setState({ jobTitles: result });
         },
         (error) => {
           console.log(error);
         }
       );
+  }
+
+  async deleteJobTitle(id) {
+    fetch(Endpoints.JobTitles + `/${id}`, {
+      method: "DELETE",
+    }).then((response) => {
+      if (!response.ok) {
+        alert("Error while deleting the job title");
+      } else {
+        alert("Job title successfully deleted");
+        this.fetchJobTitles();
+      }
+    });
+  }
+
+  async editJobTitle(id) {
+    console.log(id);
   }
 
   render() {
@@ -72,6 +98,8 @@ class JobTitles extends Component {
                   <TableCell>Name</TableCell>
                   <TableCell>Description</TableCell>
                   <TableCell>Roles</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
 
@@ -88,6 +116,28 @@ class JobTitles extends Component {
                         {jobTitle.roles.length !== 0
                           ? this.getRolesNamesAsString(jobTitle.roles)
                           : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => {
+                            this.editJobTitle(jobTitle.id);
+                          }}
+                          color="primary"
+                          aria-label="edit"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => {
+                            this.deleteJobTitle(jobTitle.id);
+                          }}
+                          color="secondary"
+                          aria-label="delete"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );
